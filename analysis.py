@@ -1,5 +1,6 @@
 import pandas as pd
-from collections import Counter
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Load the scraped data
 data = pd.read_csv('smart_locks.csv')
@@ -29,6 +30,15 @@ print(f"Number of brands: {num_brands}")
 skus_per_brand = data['Brand name'].value_counts()
 print(skus_per_brand)
 
+# Plot the number of SKUs per brand
+plt.figure(figsize=(10, 6))
+sns.barplot(x=skus_per_brand.index, y=skus_per_brand.values)
+plt.title('Number of SKUs per Brand')
+plt.xlabel('Brand')
+plt.ylabel('Number of SKUs')
+plt.xticks(rotation=90)
+plt.show()
+
 # Relative ranking calculation
 def relative_ranking(df):
     brand_ranks = df.groupby('Brand name')['Ranking'].apply(list)
@@ -37,6 +47,18 @@ def relative_ranking(df):
 
 relative_ranks = relative_ranking(data)
 print(relative_ranks)
+
+# Plot relative ranking
+relative_ranks_df = pd.DataFrame(list(relative_ranks.items()), columns=['Brand', 'Average Rank'])
+relative_ranks_df = relative_ranks_df.sort_values(by='Average Rank')
+
+plt.figure(figsize=(10, 6))
+sns.barplot(x='Brand', y='Average Rank', data=relative_ranks_df)
+plt.title('Average Ranking per Brand')
+plt.xlabel('Brand')
+plt.ylabel('Average Rank')
+plt.xticks(rotation=90)
+plt.show()
 
 # Relative rating calculation
 def relative_rating(df):
@@ -47,6 +69,18 @@ def relative_rating(df):
 relative_ratings = relative_rating(data)
 print(relative_ratings)
 
+# Plot relative ratings
+relative_ratings_df = pd.DataFrame(list(relative_ratings.items()), columns=['Brand', 'Average Rating'])
+relative_ratings_df = relative_ratings_df.sort_values(by='Average Rating', ascending=False)
+
+plt.figure(figsize=(10, 6))
+sns.barplot(x='Brand', y='Average Rating', data=relative_ratings_df)
+plt.title('Average Rating per Brand')
+plt.xlabel('Brand')
+plt.ylabel('Average Rating')
+plt.xticks(rotation=90)
+plt.show()
+
 # Price distribution of SKUs
 price_bins = [0, 3000, 5000, 10000, 15000, 20000, float('inf')]
 price_labels = ['<INR 3000', 'INR 3000-4999', 'INR 5000-9999', 'INR 10000-14999', 'INR 15000-19999', '>INR 20000']
@@ -54,6 +88,15 @@ data['Price Band'] = pd.cut(data['Price'], bins=price_bins, labels=price_labels)
 
 price_distribution = data['Price Band'].value_counts().sort_index()
 print(price_distribution)
+
+# Plot price distribution
+plt.figure(figsize=(10, 6))
+sns.barplot(x=price_distribution.index, y=price_distribution.values)
+plt.title('Price Distribution of SKUs')
+plt.xlabel('Price Band')
+plt.ylabel('Number of SKUs')
+plt.xticks(rotation=90)
+plt.show()
 
 # Save analysis results to CSV
 analysis_results = {
