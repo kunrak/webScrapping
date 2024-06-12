@@ -2,10 +2,11 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import time
+import certifi
 
 # Function to get the HTML content of a page
 def get_html(url, headers):
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers, verify=certifi.where())
     return response.text
 
 # Function to parse the HTML and extract product data
@@ -90,5 +91,7 @@ headers = {
 data = scrape_amazon(base_url, 20, headers)
 
 # Create a pandas DataFrame and save it to a CSV file
+print('end.............................')
 df = pd.DataFrame(data)
+df_ffill = df.fillna(method="ffill")
 df.to_csv('smart_locks.csv', index=False)
